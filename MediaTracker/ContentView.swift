@@ -39,11 +39,6 @@ struct ContentView: View {
 #Preview("ContentView") {
   ContentView()
     .modelContainer(for: [
-      Movie.self,
-      Series.self,
-      Anime.self,
-      Manga.self,
-      Book.self,
       Review.self,
       ArchiveItem.self,
     ])

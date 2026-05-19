@@ -3,7 +3,6 @@ import Foundation
 import SwiftData
 import SwiftUI
 
-@Model
 class Series {
   @Attribute(.unique) var id: Int
   var original_name: String

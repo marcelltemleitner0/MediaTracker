@@ -3,7 +3,6 @@ import SwiftUI
 
 struct HomeView: View {
   @StateObject private var viewModel = HomeViewModel()
-  @Environment(\.modelContext) private var modelContext
 
   private var hasNoContent: Bool {
     viewModel.movies.isEmpty && viewModel.series.isEmpty && viewModel.animeList.isEmpty
@@ -72,9 +71,9 @@ struct HomeView: View {
       .navigationTitle("Discover")
       .navigationBarTitleDisplayMode(.large)
       .task {
-        await viewModel.fetchMoviesForHome(context: modelContext)
-        await viewModel.fetchSeriesForHome(context: modelContext)
-        await viewModel.fetchAnimeForHome(context: modelContext)
+        await viewModel.fetchMoviesForHome()
+        await viewModel.fetchSeriesForHome()
+        await viewModel.fetchAnimeForHome()
       }
     }
   }
@@ -200,10 +199,5 @@ private struct PosterCard: View {
 }
 
 #Preview {
-  let config = ModelConfiguration(isStoredInMemoryOnly: true)
-  let container = try! ModelContainer(
-    for: Movie.self, Series.self, Anime.self, configurations: config)
-
-  return HomeView()
-    .modelContainer(container)
+  HomeView()
 }

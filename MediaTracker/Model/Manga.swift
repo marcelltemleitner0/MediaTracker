@@ -2,7 +2,6 @@ import Foundation
 import SwiftData
 import SwiftUI
 
-@Model
 class Manga {
   @Attribute(.unique) var malId: Int
   var title: String

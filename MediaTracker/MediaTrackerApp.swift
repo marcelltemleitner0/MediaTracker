@@ -1,5 +1,7 @@
 import SwiftUI
+import TMDb
 import SwiftData
+import Foundation
 
 @main
 struct MediaTrackerApp: App {
@@ -8,13 +10,12 @@ struct MediaTrackerApp: App {
             ContentView()
         }
         .modelContainer(for: [
-            Movie.self,
-            Series.self,
-            Anime.self,
-            Manga.self,
-            Book.self,
             Review.self,
             ArchiveItem.self
         ])
     }
+}
+
+extension TMDbClient {
+    static let shared = TMDbClient(apiKey: Config.TMDBAPIKEY)
 }

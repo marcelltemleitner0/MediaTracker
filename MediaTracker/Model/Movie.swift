@@ -3,7 +3,6 @@ import Foundation
 import SwiftData
 import SwiftUI
 
-@Model
 class Movie {
   @Attribute(.unique) var id: Int
   var title: String

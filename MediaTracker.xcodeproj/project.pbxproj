@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		DD9F84BB2FAF2EA1009F220A /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = DD9F84BA2FAF2EA1009F220A /* Alamofire */; };
+		DDA0CA492FBC5CBF002F196D /* TMDb in Frameworks */ = {isa = PBXBuildFile; productRef = DDA0CA482FBC5CBF002F196D /* TMDb */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -54,6 +55,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DD9F84BB2FAF2EA1009F220A /* Alamofire in Frameworks */,
+				DDA0CA492FBC5CBF002F196D /* TMDb in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -98,6 +100,7 @@
 			name = MediaTracker;
 			packageProductDependencies = (
 				DD9F84BA2FAF2EA1009F220A /* Alamofire */,
+				DDA0CA482FBC5CBF002F196D /* TMDb */,
 			);
 			productName = MediaTracker;
 			productReference = DD9F847D2FAF0AB8009F220A /* MediaTracker.app */;
@@ -129,6 +132,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				DD9F84B92FAF2EA1009F220A /* XCRemoteSwiftPackageReference "Alamofire" */,
+				DDA0CA472FBC5CBF002F196D /* XCRemoteSwiftPackageReference "TMDb" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DD9F847E2FAF0AB8009F220A /* Products */;
@@ -388,6 +392,14 @@
 				minimumVersion = 5.12.0;
 			};
 		};
+		DDA0CA472FBC5CBF002F196D /* XCRemoteSwiftPackageReference "TMDb" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/adamayoung/TMDb.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 17.0.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -395,6 +407,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DD9F84B92FAF2EA1009F220A /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
+		};
+		DDA0CA482FBC5CBF002F196D /* TMDb */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DDA0CA472FBC5CBF002F196D /* XCRemoteSwiftPackageReference "TMDb" */;
+			productName = TMDb;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

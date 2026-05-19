@@ -2,7 +2,6 @@ import Foundation
 import SwiftData
 import SwiftUI
 
-@Model
 class Book {
   @Attribute(.unique) var googleId: String
   var title: String
