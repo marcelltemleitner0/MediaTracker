@@ -1,330 +1,259 @@
 import SwiftData
 import SwiftUI
 
+struct SearchResult: Identifiable {
+    let id: String
+    let title: String
+    let subtitle: String
+    let posterPath: String?
+    let imageUrl: String?
+    let rating: Double
+}
+
+
+struct SearchCategory {
+    let tab: TabItem
+    let results: (SearchViewModel) -> [SearchResult]
+}
+
 struct SearchView: View {
-  @ObservedObject var viewModel: SearchViewModel
-  @State private var selectedTab = "Top Results"
-  @Environment(\.isSearching) private var isSearching
+    @ObservedObject var viewModel: SearchViewModel
+    @State private var selectedTabId: String = "Top Results"
+    @Environment(\.isSearching) private var isSearching
 
-  let tabs = ["Top Results", "Movies", "Tv Series", "Animes", "Manga", "Books"]
-
-  var body: some View {
-    VStack(spacing: 0) {
-      if isSearching {
-        LiquidGlassTabBar(tabs: tabs, selectedTab: $selectedTab)
-
-        if viewModel.isLoading {
-          Spacer()
-          ProgressView()
-          Spacer()
-        } else {
-          ScrollView {
-            LazyVStack(spacing: 0) {
-              switch selectedTab {
-              case "Movies":
-                ForEach(viewModel.movieResults, id: \.id) { movie in
-                  SearchRow(
-                    title: movie.title,
-                    subtitle: "Movie · \(movie.releaseDate)",
-                    posterPath: movie.posterPath,
-                    rating: movie.voteAverage)
+    private var categories: [SearchCategory] {
+        [
+            SearchCategory(tab: TabItem("Movies", icon: "film", color: .red)) { vm in
+                vm.movieResults.map {
+                    SearchResult(
+                        id: "movie-\($0.id)",
+                        title: $0.title,
+                        subtitle: "Movie · \($0.releaseDate)",
+                        posterPath: $0.posterPath,
+                        imageUrl: nil,
+                        rating: $0.voteAverage
+                    )
                 }
-
-              case "Tv Series":
-                ForEach(viewModel.seriesResults, id: \.id) { series in
-                  SearchRow(
-                    title: series.original_name,
-                    subtitle: "TV · \(series.first_air_date)",
-                    posterPath: series.posterPath,
-                    rating: series.voteAverage)
+            },
+            SearchCategory(tab: TabItem("Tv Series", icon: "tv", color: .red)) { vm in
+                vm.seriesResults.map {
+                    SearchResult(
+                        id: "tv-\($0.id)",
+                        title: $0.original_name,
+                        subtitle: "TV · \($0.first_air_date)",
+                        posterPath: $0.posterPath,
+                        imageUrl: nil,
+                        rating: $0.voteAverage
+                    )
                 }
-
-              case "Animes":
-                ForEach(viewModel.animeResults, id: \.malId) { anime in
-                  SearchRow(
-                    title: anime.title,
-                    subtitle: "Anime · \(anime.type ?? "")",
-                    posterPath: nil,
-                    imageUrl: anime.imageUrl,
-                    rating: anime.score)
+            },
+            SearchCategory(tab: TabItem("Animes", icon: "sparkles", color: .red)) { vm in
+                vm.animeResults.map {
+                    SearchResult(
+                        id: "anime-\($0.malId)",
+                        title: $0.title,
+                        subtitle: "Anime · \($0.type ?? "")",
+                        posterPath: nil,
+                        imageUrl: $0.imageUrl,
+                        rating: $0.score
+                    )
                 }
-
-              case "Manga":
-                ForEach(viewModel.mangaResults, id: \.malId) { manga in
-                  SearchRow(
-                    title: manga.title,
-                    subtitle: "Manga · \(manga.type ?? "")",
-                    posterPath: nil,
-                    imageUrl: manga.imageUrl,
-                    rating: manga.score)
+            },
+            SearchCategory(tab: TabItem("Manga", icon: "book.closed", color: .red)) { vm in
+                vm.mangaResults.map {
+                    SearchResult(
+                        id: "manga-\($0.malId)",
+                        title: $0.title,
+                        subtitle: "Manga · \($0.type ?? "")",
+                        posterPath: nil,
+                        imageUrl: $0.imageUrl,
+                        rating: $0.score
+                    )
                 }
-
-              case "Books":
-                ForEach(viewModel.bookResults, id: \.googleId) { book in
-                  SearchRow(
-                    title: book.title,
-                    subtitle: "Book · \(book.authors)",
-                    posterPath: nil,
-                    imageUrl: book.imageUrl,
-                    rating: book.rating)
+            },
+            SearchCategory(tab: TabItem("Books", icon: "books.vertical", color: .red)) { vm in
+                vm.bookResults.map {
+                    SearchResult(
+                        id: "book-\($0.googleId)",
+                        title: $0.title,
+                        subtitle: "Book · \($0.authors)",
+                        posterPath: nil,
+                        imageUrl: $0.imageUrl,
+                        rating: $0.rating
+                    )
                 }
-
-              default:
-                ForEach(viewModel.movieResults.prefix(3), id: \.id) { movie in
-                  SearchRow(
-                    title: movie.title,
-                    subtitle: "Movie · \(movie.releaseDate)",
-                    posterPath: movie.posterPath,
-                    rating: movie.voteAverage)
-                }
-                ForEach(viewModel.seriesResults.prefix(3), id: \.id) { series in
-                  SearchRow(
-                    title: series.original_name,
-                    subtitle: "TV · \(series.first_air_date)",
-                    posterPath: series.posterPath,
-                    rating: series.voteAverage)
-                }
-                ForEach(viewModel.animeResults.prefix(3), id: \.malId) { anime in
-                  SearchRow(
-                    title: anime.title,
-                    subtitle: "Anime · \(anime.type ?? "")",
-                    posterPath: nil,
-                    imageUrl: anime.imageUrl,
-                    rating: anime.score)
-                }
-                ForEach(viewModel.mangaResults.prefix(3), id: \.malId) { manga in
-                  SearchRow(
-                    title: manga.title,
-                    subtitle: "Manga · \(manga.type ?? "")",
-                    posterPath: nil,
-                    imageUrl: manga.imageUrl,
-                    rating: manga.score)
-                }
-                ForEach(viewModel.bookResults.prefix(3), id: \.googleId) { book in
-                  SearchRow(
-                    title: book.title,
-                    subtitle: "Book · \(book.authors)",
-                    posterPath: nil,
-                    imageUrl: book.imageUrl,
-                    rating: book.rating)
-                }
-              }
-            }
-            .padding(.top, 8)
-          }
-        }
-      } else {
-        ContentUnavailableView(
-          "Search",
-          systemImage: "magnifyingglass",
-          description: Text("Search for movies, TV series, anime, manga, and books"))
-      }
+            },
+        ]
     }
-  }
-}
 
-// MARK: - Tab Bar
+    private var topResults: [SearchResult] {
+        categories
+            .flatMap { $0.results(viewModel).prefix(3) }
+            .sorted { $0.rating > $1.rating }
+    }
 
-struct LiquidGlassTabBar: View {
-  let tabs: [String]
-  @Binding var selectedTab: String
-  @Namespace private var tabAnimation
+    private var searchTabs: [TabItem] {
+        [TabItem("Top Results", icon: "star.fill", color: .red)]
+        + categories.map(\.tab)
+    }
 
-  var body: some View {
-    ScrollView(.horizontal, showsIndicators: false) {
-      HStack(spacing: 8) {
-        ForEach(tabs, id: \.self) { tab in
-          TabPill(title: tab, isSelected: selectedTab == tab, namespace: tabAnimation)
-            .onTapGesture {
-              withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) {
-                selectedTab = tab
-              }
+    private func results(for tabId: String) -> [SearchResult] {
+        if tabId == "Top Results" { return topResults }
+        return categories.first { $0.tab.id == tabId }?.results(viewModel) ?? []
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            if isSearching {
+                TabBarPill(tabs: searchTabs, selectedId: $selectedTabId)
+
+                if viewModel.isLoading {
+                    Spacer()
+                    ProgressView()
+                    Spacer()
+                } else {
+                    ScrollView {
+                        LazyVStack(spacing: 0) {
+                            ForEach(results(for: selectedTabId)) { result in
+                                SearchRow(
+                                    title: result.title,
+                                    subtitle: result.subtitle,
+                                    posterPath: result.posterPath,
+                                    imageUrl: result.imageUrl,
+                                    rating: result.rating
+                                )
+                            }
+                        }
+                        .padding(.top, 8)
+                    }
+                }
+            } else {
+                ContentUnavailableView(
+                    "Search",
+                    systemImage: "magnifyingglass",
+                    description: Text("Search for movies, TV series, anime, manga, and books")
+                )
             }
         }
-      }
-      .padding(.horizontal, 16)
-      .padding(.vertical, 10)
     }
-    .background(.ultraThinMaterial)
-  }
 }
 
-struct TabPill: View {
-  let title: String
-  let isSelected: Bool
-  var namespace: Namespace.ID
-
-  var body: some View {
-    ZStack {
-      if isSelected {
-        Capsule()
-          .fill(Color.red.opacity(0.85))
-          .overlay {
-            Capsule()
-              .fill(
-                LinearGradient(
-                  colors: [Color.white.opacity(0.25), Color.white.opacity(0.05)],
-                  startPoint: .topLeading, endPoint: .bottomTrailing))
-          }
-          .overlay {
-            Capsule()
-              .strokeBorder(
-                LinearGradient(
-                  colors: [Color.white.opacity(0.5), Color.white.opacity(0.1)],
-                  startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 0.75)
-          }
-          .shadow(color: Color.red.opacity(0.4), radius: 8, x: 0, y: 4)
-          .matchedGeometryEffect(id: "selectedPill", in: namespace)
-      } else {
-        Capsule()
-          .fill(.ultraThinMaterial)
-          .overlay {
-            Capsule()
-              .fill(
-                LinearGradient(
-                  colors: [Color.white.opacity(0.08), Color.white.opacity(0.02)],
-                  startPoint: .topLeading, endPoint: .bottomTrailing))
-          }
-          .overlay {
-            Capsule()
-              .strokeBorder(Color.white.opacity(0.15), lineWidth: 0.5)
-          }
-      }
-
-      Text(title)
-        .font(.system(size: 15, weight: isSelected ? .semibold : .medium))
-        .foregroundStyle(isSelected ? .white : Color(.label).opacity(0.75))
-        .padding(.horizontal, 16)
-        .padding(.vertical, 9)
-    }
-    .fixedSize()
-    .contentShape(Capsule())
-  }
-}
 struct SearchRow: View {
-  let title: String
-  let subtitle: String
-  var posterPath: String?
-  var imageUrl: String? = nil
-  let rating: Double
+    let title: String
+    let subtitle: String
+    var posterPath: String?
+    var imageUrl: String? = nil
+    let rating: Double
 
-  @State private var showReviewSheet = false
-  @Environment(\.modelContext) private var modelContext
+    @State private var showReviewSheet = false
+    @Environment(\.modelContext) private var modelContext
 
-  private var resolvedImageUrl: URL? {
-    if let path = posterPath {
-      return URL(string: "https://image.tmdb.org/t/p/w92\(path)")
-    } else if let url = imageUrl {
-      return URL(string: url.replacingOccurrences(of: "http://", with: "https://"))
+    private var resolvedImageUrl: URL? {
+        if let path = posterPath {
+            return URL(string: "https://image.tmdb.org/t/p/w92\(path)")
+        } else if let url = imageUrl {
+            return URL(string: url.replacingOccurrences(of: "http://", with: "https://"))
+        }
+        return nil
     }
-    return nil
-  }
 
-  var body: some View {
-    HStack(spacing: 12) {
-      Group {
-        if let url = resolvedImageUrl {
-          AsyncImage(url: url) { phase in
-            switch phase {
-            case .success(let image):
-              image.resizable().scaledToFill()
-            default:
-              Color(.secondarySystemFill)
+    var body: some View {
+        HStack(spacing: 12) {
+            Group {
+                if let url = resolvedImageUrl {
+                    AsyncImage(url: url) { phase in
+                        switch phase {
+                        case .success(let image):
+                            image.resizable().scaledToFill()
+                        default:
+                            Color(.secondarySystemFill)
+                        }
+                    }
+                } else {
+                    Color(.secondarySystemFill)
+                }
             }
-          }
+            .frame(width: 52, height: 74)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.system(size: 15, weight: .semibold))
+                    .lineLimit(2)
+                Text(subtitle)
+                    .font(.system(size: 13))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                Label(String(format: "%.1f", rating), systemImage: "star.fill")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(.orange)
+            }
+
+            Spacer()
+
+            Menu {
+                Menu {
+                    Button { archive(status: .watched) } label: {
+                        Label("Watched", systemImage: "checkmark.circle.fill")
+                    }
+                    Button { archive(status: .onGoing) } label: {
+                        Label("On Going", systemImage: "play.circle.fill")
+                    }
+                    Button { archive(status: .planningTo) } label: {
+                        Label("Planning to Watch", systemImage: "bookmark.fill")
+                    }
+                } label: {
+                    Label("Mark as…", systemImage: "tag")
+                }
+
+                Divider()
+
+                Button {} label: {
+                    Label("Add to Playlist", systemImage: "plus.circle")
+                }
+
+                Button { showReviewSheet = true } label: {
+                    Label("Leave a Review", systemImage: "square.and.pencil")
+                }
+            } label: {
+                Image(systemName: "ellipsis")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 36, height: 36)
+                    .contentShape(Rectangle())
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .sheet(isPresented: $showReviewSheet) {
+            ReviewSheet(title: title, subtitle: subtitle, imageUrl: resolvedImageUrl)
+        }
+
+        Divider().padding(.leading, 80)
+    }
+
+    private func archive(status: WatchStatus) {
+        let mediaPrefix = subtitle.components(separatedBy: " ·").first ?? "item"
+        let compositeId =
+            "\(mediaPrefix.lowercased())-\(title.lowercased().filter { !$0.isWhitespace })"
+
+        let descriptor = FetchDescriptor<ArchiveItem>(
+            predicate: #Predicate { $0.compositeId == compositeId }
+        )
+        if let existing = try? modelContext.fetch(descriptor).first {
+            existing.status = status
         } else {
-          Color(.secondarySystemFill)
+            let item = ArchiveItem(
+                compositeId: compositeId,
+                title: title,
+                subtitle: subtitle,
+                imageUrl: resolvedImageUrl?.absoluteString,
+                rating: rating,
+                mediaType: MediaType(rawValue: mediaPrefix) ?? .movie,
+                status: status
+            )
+            modelContext.insert(item)
         }
-      }
-      .frame(width: 52, height: 74)
-      .clipShape(RoundedRectangle(cornerRadius: 8))
-
-      VStack(alignment: .leading, spacing: 4) {
-        Text(title)
-          .font(.system(size: 15, weight: .semibold))
-          .lineLimit(2)
-        Text(subtitle)
-          .font(.system(size: 13))
-          .foregroundStyle(.secondary)
-          .lineLimit(1)
-        Label(String(format: "%.1f", rating), systemImage: "star.fill")
-          .font(.system(size: 13, weight: .medium))
-          .foregroundStyle(.orange)
-      }
-
-      Spacer()
-
-      Menu {
-        Menu {
-          Button {
-            archive(status: .watched)
-          } label: {
-            Label("Watched", systemImage: "checkmark.circle.fill")
-          }
-          Button {
-            archive(status: .onGoing)
-          } label: {
-            Label("On Going", systemImage: "play.circle.fill")
-          }
-          Button {
-            archive(status: .planningTo)
-          } label: {
-            Label("Planning to Watch", systemImage: "bookmark.fill")
-          }
-        } label: {
-          Label("Mark as…", systemImage: "tag")
-        }
-
-        Divider()
-
-        Button {
-        } label: {
-          Label("Add to Playlist", systemImage: "plus.circle")
-        }
-
-        Button {
-          showReviewSheet = true
-        } label: {
-          Label("Leave a Review", systemImage: "square.and.pencil")
-        }
-      } label: {
-        Image(systemName: "ellipsis")
-          .font(.system(size: 16, weight: .medium))
-          .foregroundStyle(.secondary)
-          .frame(width: 36, height: 36)
-          .contentShape(Rectangle())
-      }
+        try? modelContext.save()
     }
-    .padding(.horizontal, 16)
-    .padding(.vertical, 10)
-    .sheet(isPresented: $showReviewSheet) {
-      ReviewSheet(title: title, subtitle: subtitle, imageUrl: resolvedImageUrl)
-    }
-
-    Divider().padding(.leading, 80)
-  }
-  private func archive(status: WatchStatus) {
-    let mediaPrefix = subtitle.components(separatedBy: " ·").first ?? "item"
-    let compositeId =
-      "\(mediaPrefix.lowercased())-\(title.lowercased().filter { !$0.isWhitespace })"
-
-    let descriptor = FetchDescriptor<ArchiveItem>(
-      predicate: #Predicate { $0.compositeId == compositeId }
-    )
-    if let existing = try? modelContext.fetch(descriptor).first {
-      existing.status = status
-    } else {
-      let item = ArchiveItem(
-        compositeId: compositeId,
-        title: title,
-        subtitle: subtitle,
-        imageUrl: resolvedImageUrl?.absoluteString,
-        rating: rating,
-        mediaType: MediaType(rawValue: mediaPrefix) ?? .movie,
-        status: status
-      )
-      modelContext.insert(item)
-    }
-    try? modelContext.save()
-  }
 }
