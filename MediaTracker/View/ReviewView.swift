@@ -35,16 +35,30 @@ struct ReviewView: View {
                 Divider()
 
                 ScrollView {
-                    LazyVStack(spacing: 12) {
-                        ForEach(filtered) { review in
-                            ReviewCard(review: review) {
-                                modelContext.delete(review)
+                    if filtered.isEmpty {
+                        ContentUnavailableView(
+                            searchText.isEmpty ? "No Reviews Yet" : "No Results",
+                            systemImage: searchText.isEmpty ? "square.and.pencil" : "magnifyingglass",
+                            description: Text(
+                                searchText.isEmpty
+                                ? "Your reviews will appear here"
+                                : "No reviews match \"\(searchText)\""
+                            )
+                        )
+                        .padding(.top, 60)
+                    } else {
+                        
+                        LazyVStack(spacing: 12) {
+                            ForEach(filtered) { review in
+                                ReviewCard(review: review) {
+                                    modelContext.delete(review)
+                                }
                             }
                         }
+                        .padding(.horizontal, 16)
+                        .padding(.top, 12)
+                        .padding(.bottom, 24)
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 12)
-                    .padding(.bottom, 24)
                 }
                 .background(Color(.systemGroupedBackground))
                 .navigationTitle("Reviews")

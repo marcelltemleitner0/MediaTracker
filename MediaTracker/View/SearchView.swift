@@ -111,7 +111,16 @@ struct SearchView: View {
                     Spacer()
                     ProgressView()
                     Spacer()
-                } else {
+                } else if results(for: selectedTabId).isEmpty {
+                    ContentUnavailableView(
+                        "No results",
+                        systemImage: "magnifyingglass",
+                        description: Text("No results found for this category")
+                    )
+                }
+                
+                
+                else {
                     ScrollView {
                         LazyVStack(spacing: 0) {
                             ForEach(results(for: selectedTabId)) { result in
