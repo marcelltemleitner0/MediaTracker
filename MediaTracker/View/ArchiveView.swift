@@ -34,18 +34,31 @@ struct ArchiveView: View {
                 Divider()
 
                 ScrollView {
-                    LazyVStack(spacing: 12) {
-                        ForEach(filtered) { item in
-                            ArchiveCard(item: item) {
-                                viewModel.delete(item)
-                            } onStatusChange: { newStatus in
-                                viewModel.updateStatus(of: item, to: newStatus)
+                    if filtered.isEmpty {
+                        ContentUnavailableView(
+                            selectedStatus == nil ? "No Archive Yet" : "Nothing \(selectedTabId)",
+                            systemImage: selectedStatus == nil ? "square.stack.fill" : (selectedStatus?.icon ?? "square.stack.fill"),
+                            description: Text(
+                                selectedStatus == nil
+                                ? "Items you archive will appear here"
+                                : "Nothing marked as \"\(selectedTabId)\" yet"
+                            )
+                        )
+                        .padding(.top, 60)
+                    } else {
+                        LazyVStack(spacing: 12) {
+                            ForEach(filtered) { item in
+                                ArchiveCard(item: item) {
+                                    viewModel.delete(item)
+                                } onStatusChange: { newStatus in
+                                    viewModel.updateStatus(of: item, to: newStatus)
+                                }
                             }
                         }
+                        .padding(.horizontal, 16)
+                        .padding(.top, 12)
+                        .padding(.bottom, 24)
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 12)
-                    .padding(.bottom, 24)
                 }
                 .background(Color(.systemGroupedBackground))
             }
