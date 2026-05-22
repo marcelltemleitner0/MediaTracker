@@ -9,7 +9,20 @@
 /* Begin PBXBuildFile section */
 		DD9F84BB2FAF2EA1009F220A /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = DD9F84BA2FAF2EA1009F220A /* Alamofire */; };
 		DDA0CA492FBC5CBF002F196D /* TMDb in Frameworks */ = {isa = PBXBuildFile; productRef = DDA0CA482FBC5CBF002F196D /* TMDb */; };
+		DDA0CA852FBE59A5002F196D /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDA0CA842FBE59A5002F196D /* WidgetKit.framework */; };
+		DDA0CA872FBE59A5002F196D /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDA0CA862FBE59A5002F196D /* SwiftUI.framework */; };
+		DDA0CA982FBE59A7002F196D /* MediaTrackerWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = DDA0CA822FBE59A5002F196D /* MediaTrackerWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		DDA0CA962FBE59A7002F196D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DD9F84752FAF0AB8009F220A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DDA0CA812FBE59A5002F196D;
+			remoteInfo = MediaTrackerWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		DDF7AA642FBA61CE00485C7F /* Embed Foundation Extensions */ = {
@@ -18,6 +31,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				DDA0CA982FBE59A7002F196D /* MediaTrackerWidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -26,6 +40,10 @@
 
 /* Begin PBXFileReference section */
 		DD9F847D2FAF0AB8009F220A /* MediaTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MediaTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DDA0CA822FBE59A5002F196D /* MediaTrackerWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MediaTrackerWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		DDA0CA842FBE59A5002F196D /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		DDA0CA862FBE59A5002F196D /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		DDA0CA9E2FBE5C81002F196D /* MediaTrackerWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MediaTrackerWidgetExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -36,6 +54,13 @@
 			);
 			target = DD9F847C2FAF0AB8009F220A /* MediaTracker */;
 		};
+		DDA0CA9C2FBE59A7002F196D /* Exceptions for "MediaTrackerWidget" folder in "MediaTrackerWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = DDA0CA812FBE59A5002F196D /* MediaTrackerWidgetExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -45,6 +70,14 @@
 				DD9F84AF2FAF1EBF009F220A /* Exceptions for "MediaTracker" folder in "MediaTracker" target */,
 			);
 			path = MediaTracker;
+			sourceTree = "<group>";
+		};
+		DDA0CA882FBE59A5002F196D /* MediaTrackerWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				DDA0CA9C2FBE59A7002F196D /* Exceptions for "MediaTrackerWidget" folder in "MediaTrackerWidgetExtension" target */,
+			);
+			path = MediaTrackerWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -59,13 +92,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DDA0CA7F2FBE59A5002F196D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DDA0CA872FBE59A5002F196D /* SwiftUI.framework in Frameworks */,
+				DDA0CA852FBE59A5002F196D /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		DD9F84742FAF0AB8009F220A = {
 			isa = PBXGroup;
 			children = (
+				DDA0CA9E2FBE5C81002F196D /* MediaTrackerWidgetExtension.entitlements */,
 				DD9F847F2FAF0AB8009F220A /* MediaTracker */,
+				DDA0CA882FBE59A5002F196D /* MediaTrackerWidget */,
+				DDA0CA832FBE59A5002F196D /* Frameworks */,
 				DD9F847E2FAF0AB8009F220A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -74,8 +119,18 @@
 			isa = PBXGroup;
 			children = (
 				DD9F847D2FAF0AB8009F220A /* MediaTracker.app */,
+				DDA0CA822FBE59A5002F196D /* MediaTrackerWidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		DDA0CA832FBE59A5002F196D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DDA0CA842FBE59A5002F196D /* WidgetKit.framework */,
+				DDA0CA862FBE59A5002F196D /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -93,6 +148,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				DDA0CA972FBE59A7002F196D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				DD9F847F2FAF0AB8009F220A /* MediaTracker */,
@@ -106,6 +162,28 @@
 			productReference = DD9F847D2FAF0AB8009F220A /* MediaTracker.app */;
 			productType = "com.apple.product-type.application";
 		};
+		DDA0CA812FBE59A5002F196D /* MediaTrackerWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DDA0CA992FBE59A7002F196D /* Build configuration list for PBXNativeTarget "MediaTrackerWidgetExtension" */;
+			buildPhases = (
+				DDA0CA7E2FBE59A5002F196D /* Sources */,
+				DDA0CA7F2FBE59A5002F196D /* Frameworks */,
+				DDA0CA802FBE59A5002F196D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				DDA0CA882FBE59A5002F196D /* MediaTrackerWidget */,
+			);
+			name = MediaTrackerWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = MediaTrackerWidgetExtension;
+			productReference = DDA0CA822FBE59A5002F196D /* MediaTrackerWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -117,6 +195,9 @@
 				LastUpgradeCheck = 2630;
 				TargetAttributes = {
 					DD9F847C2FAF0AB8009F220A = {
+						CreatedOnToolsVersion = 26.3;
+					};
+					DDA0CA812FBE59A5002F196D = {
 						CreatedOnToolsVersion = 26.3;
 					};
 				};
@@ -140,12 +221,20 @@
 			projectRoot = "";
 			targets = (
 				DD9F847C2FAF0AB8009F220A /* MediaTracker */,
+				DDA0CA812FBE59A5002F196D /* MediaTrackerWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		DD9F847B2FAF0AB8009F220A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DDA0CA802FBE59A5002F196D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -162,7 +251,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DDA0CA7E2FBE59A5002F196D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DDA0CA972FBE59A7002F196D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DDA0CA812FBE59A5002F196D /* MediaTrackerWidgetExtension */;
+			targetProxy = DDA0CA962FBE59A7002F196D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		DD9F84862FAF0ABA009F220A /* Debug */ = {
@@ -297,6 +401,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = MediaTracker/MediaTracker.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Y8H7LSYLGW;
@@ -332,6 +437,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = MediaTracker/MediaTracker.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Y8H7LSYLGW;
@@ -360,6 +466,68 @@
 			};
 			name = Release;
 		};
+		DDA0CA9A2FBE59A7002F196D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = MediaTrackerWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Y8H7LSYLGW;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MediaTrackerWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = MediaTrackerWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = MT.MediaTracker.MediaTrackerWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		DDA0CA9B2FBE59A7002F196D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = MediaTrackerWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Y8H7LSYLGW;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MediaTrackerWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = MediaTrackerWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = MT.MediaTracker.MediaTrackerWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -377,6 +545,15 @@
 			buildConfigurations = (
 				DD9F84892FAF0ABA009F220A /* Debug */,
 				DD9F848A2FAF0ABA009F220A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DDA0CA992FBE59A7002F196D /* Build configuration list for PBXNativeTarget "MediaTrackerWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DDA0CA9A2FBE59A7002F196D /* Debug */,
+				DDA0CA9B2FBE59A7002F196D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

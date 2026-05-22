@@ -47,13 +47,11 @@ struct ReviewView: View {
                     .padding(.bottom, 24)
                 }
                 .background(Color(.systemGroupedBackground))
-                .navigationTitle("My Reviews")
+                .navigationTitle("Reviews")
                 .navigationBarTitleDisplayMode(.large)
             }
         }
     }
-
-    // MARK: - ReviewCard
 
     struct ReviewCard: View {
         let review: Review
@@ -64,14 +62,19 @@ struct ReviewView: View {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: 12) {
                     Group {
-                        if let url = review.resolvedImageURL {
+                        if let urlString = review.mediaImageUrl,
+                           let url = URL(string: urlString) {
+
                             AsyncImage(url: url) { phase in
                                 if case .success(let img) = phase {
-                                    img.resizable().scaledToFill()
+                                    img
+                                        .resizable()
+                                        .scaledToFill()
                                 } else {
                                     PosterPlaceholder()
                                 }
                             }
+
                         } else {
                             PosterPlaceholder()
                         }
@@ -159,20 +162,6 @@ struct ReviewView: View {
                     Label("Delete Review", systemImage: "trash")
                 }
             }
-        }
-    }
-
-    // MARK: - PosterPlaceholder
-
-    struct PosterPlaceholder: View {
-        var body: some View {
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color(.tertiarySystemFill))
-                .overlay(
-                    Image(systemName: "photo")
-                        .foregroundStyle(.quaternary)
-                        .font(.system(size: 18))
-                )
         }
     }
 }

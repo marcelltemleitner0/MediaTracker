@@ -10,7 +10,6 @@ struct SearchResult: Identifiable {
     let rating: Double
 }
 
-
 struct SearchCategory {
     let tab: TabItem
     let results: (SearchViewModel) -> [SearchResult]
@@ -18,6 +17,7 @@ struct SearchCategory {
 
 struct SearchView: View {
     @ObservedObject var viewModel: SearchViewModel
+    @ObservedObject var archiveViewModel: ArchiveViewModel
     @State private var selectedTabId: String = "Top Results"
     @Environment(\.isSearching) private var isSearching
 
@@ -120,7 +120,8 @@ struct SearchView: View {
                                     subtitle: result.subtitle,
                                     posterPath: result.posterPath,
                                     imageUrl: result.imageUrl,
-                                    rating: result.rating
+                                    rating: result.rating,
+                                    archiveViewModel: archiveViewModel
                                 )
                             }
                         }
@@ -144,9 +145,9 @@ struct SearchRow: View {
     var posterPath: String?
     var imageUrl: String? = nil
     let rating: Double
+    @ObservedObject var archiveViewModel: ArchiveViewModel
 
     @State private var showReviewSheet = false
-    @Environment(\.modelContext) private var modelContext
 
     private var resolvedImageUrl: URL? {
         if let path = posterPath {
@@ -234,26 +235,22 @@ struct SearchRow: View {
 
     private func archive(status: WatchStatus) {
         let mediaPrefix = subtitle.components(separatedBy: " ·").first ?? "item"
-        let compositeId =
-            "\(mediaPrefix.lowercased())-\(title.lowercased().filter { !$0.isWhitespace })"
+        let compositeId = "\(mediaPrefix.lowercased())-\(title.lowercased().filter { !$0.isWhitespace })"
 
-        let descriptor = FetchDescriptor<ArchiveItem>(
-            predicate: #Predicate { $0.compositeId == compositeId }
-        )
-        if let existing = try? modelContext.fetch(descriptor).first {
-            existing.status = status
+        if let existing = archiveViewModel.items.first(where: { $0.compositeId == compositeId }) {
+            archiveViewModel.updateStatus(of: existing, to: status)
         } else {
-            let item = ArchiveItem(
-                compositeId: compositeId,
-                title: title,
-                subtitle: subtitle,
-                imageUrl: resolvedImageUrl?.absoluteString,
-                rating: rating,
-                mediaType: MediaType(rawValue: mediaPrefix) ?? .movie,
-                status: status
+            archiveViewModel.add(
+                Archive(
+                    compositeId: compositeId,
+                    title: title,
+                    subtitle: subtitle,
+                    imageUrl: resolvedImageUrl?.absoluteString,
+                    rating: rating,
+                    mediaType: MediaType(rawValue: mediaPrefix) ?? .movie,
+                    status: status
+                )
             )
-            modelContext.insert(item)
         }
-        try? modelContext.save()
     }
 }

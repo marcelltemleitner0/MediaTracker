@@ -26,10 +26,6 @@ final class Review {
     self.reviewText = reviewText
     self.createdAt = Date()
   }
-  var resolvedImageURL: URL? {
-    guard let raw = mediaImageUrl else { return nil }
-    return URL(string: raw.replacingOccurrences(of: "http://", with: "https://"))
-  }
   var mediaKind: String {
     let prefix = mediaSubtitle.components(separatedBy: " ·").first ?? ""
     switch prefix.trimmingCharacters(in: .whitespaces) {
