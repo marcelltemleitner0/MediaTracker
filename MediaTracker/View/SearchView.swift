@@ -74,11 +74,11 @@ struct SearchView: View {
             SearchCategory(tab: TabItem("Books", icon: "books.vertical", color: .red)) { vm in
                 vm.bookResults.map {
                     SearchResult(
-                        id: "book-\($0.googleId)",
+                        id: "book-\($0.openLibraryId)",
                         title: $0.title,
                         subtitle: "Book · \($0.authors)",
                         posterPath: nil,
-                        imageUrl: $0.imageUrl,
+                        imageUrl: $0.imageUrl, //edit this or idk here
                         rating: $0.rating
                     )
                 }
@@ -208,11 +208,6 @@ struct SearchRow: View {
                 }
 
                 Divider()
-
-                Button {} label: {
-                    Label("Add to Playlist", systemImage: "plus.circle")
-                }
-
                 Button { showReviewSheet = true } label: {
                     Label("Leave a Review", systemImage: "square.and.pencil")
                 }
