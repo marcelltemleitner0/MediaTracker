@@ -3,7 +3,58 @@ import SwiftUI
 
 struct HomeView: View {
   @StateObject private var viewModel = HomeViewModel()
+    
+    private struct FeaturedCard: View {
+      let movie: Movie
 
+      var body: some View {
+        ZStack(alignment: .bottomLeading) {
+          AsyncImage(
+            url: movie.posterPath.flatMap { URL(string: "https://image.tmdb.org/t/p/w780\($0)") }
+          ) { phase in
+            if case .success(let img) = phase {
+              img.resizable().scaledToFill()
+            } else {
+              LinearGradient(
+                colors: [.red.opacity(0.4), .indigo.opacity(0.6)], startPoint: .topLeading,
+                endPoint: .bottomTrailing)
+            }
+          }
+          .frame(maxWidth: .infinity).frame(height: 420).clipped()
+
+          LinearGradient(
+            colors: [.black.opacity(0), .black.opacity(0.3), .black.opacity(0.85)], startPoint: .top,
+            endPoint: .bottom)
+
+          VStack(alignment: .leading, spacing: 8) {
+            Text("✦ FEATURED")
+              .font(.system(size: 10, weight: .bold, design: .monospaced))
+              .foregroundStyle(.white.opacity(0.7))
+              .padding(.horizontal, 8).padding(.vertical, 3)
+              .background(.ultraThinMaterial.opacity(0.6), in: Capsule())
+
+            Text(movie.title)
+              .font(.system(size: 26, weight: .bold))
+              .foregroundStyle(.white)
+              .lineLimit(2)
+
+            HStack(spacing: 10) {
+              Label(String(format: "%.1f", movie.voteAverage), systemImage: "star.fill")
+                .font(.system(size: 13, weight: .semibold)).foregroundStyle(.orange)
+              Text("·").foregroundStyle(.white.opacity(0.5))
+              Text(String(movie.releaseDate.prefix(4)))
+                .font(.system(size: 13)).foregroundStyle(.white.opacity(0.75))
+              Text("·").foregroundStyle(.white.opacity(0.5))
+              Label("Movie", systemImage: "film")
+                .font(.system(size: 13)).foregroundStyle(.white.opacity(0.75))
+            }
+            .padding(.top, 4)
+          }
+          .padding(.horizontal, 20).padding(.bottom, 24)
+        }
+        .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
+      }
+    }
   private var hasNoContent: Bool {
     viewModel.movies.isEmpty && viewModel.series.isEmpty && viewModel.animeList.isEmpty
   }
@@ -84,58 +135,6 @@ private struct MediaItem {
   let subtitle: String
   let rating: Double
   let url: URL?
-}
-
-private struct FeaturedCard: View {
-  let movie: Movie
-
-  var body: some View {
-    ZStack(alignment: .bottomLeading) {
-      AsyncImage(
-        url: movie.posterPath.flatMap { URL(string: "https://image.tmdb.org/t/p/w780\($0)") }
-      ) { phase in
-        if case .success(let img) = phase {
-          img.resizable().scaledToFill()
-        } else {
-          LinearGradient(
-            colors: [.red.opacity(0.4), .indigo.opacity(0.6)], startPoint: .topLeading,
-            endPoint: .bottomTrailing)
-        }
-      }
-      .frame(maxWidth: .infinity).frame(height: 420).clipped()
-
-      LinearGradient(
-        colors: [.black.opacity(0), .black.opacity(0.3), .black.opacity(0.85)], startPoint: .top,
-        endPoint: .bottom)
-
-      VStack(alignment: .leading, spacing: 8) {
-        Text("✦ FEATURED")
-          .font(.system(size: 10, weight: .bold, design: .monospaced))
-          .foregroundStyle(.white.opacity(0.7))
-          .padding(.horizontal, 8).padding(.vertical, 3)
-          .background(.ultraThinMaterial.opacity(0.6), in: Capsule())
-
-        Text(movie.title)
-          .font(.system(size: 26, weight: .bold))
-          .foregroundStyle(.white)
-          .lineLimit(2)
-
-        HStack(spacing: 10) {
-          Label(String(format: "%.1f", movie.voteAverage), systemImage: "star.fill")
-            .font(.system(size: 13, weight: .semibold)).foregroundStyle(.orange)
-          Text("·").foregroundStyle(.white.opacity(0.5))
-          Text(String(movie.releaseDate.prefix(4)))
-            .font(.system(size: 13)).foregroundStyle(.white.opacity(0.75))
-          Text("·").foregroundStyle(.white.opacity(0.5))
-          Label("Movie", systemImage: "film")
-            .font(.system(size: 13)).foregroundStyle(.white.opacity(0.75))
-        }
-        .padding(.top, 4)
-      }
-      .padding(.horizontal, 20).padding(.bottom, 24)
-    }
-    .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
-  }
 }
 
 private struct MediaSection: View {

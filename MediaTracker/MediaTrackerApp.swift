@@ -11,7 +11,7 @@ struct MediaTrackerApp: App {
         }
         .modelContainer(for: [
             Review.self,
-            ArchiveItem.self
+            Archive.self
         ])
     }
 }

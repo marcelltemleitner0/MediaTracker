@@ -1,9 +1,1 @@
-//
-//  Config.xcconfig
-//  MediaTracker
-//
-//  Created by Marcell on 2026. 05. 19..
-//
-
-// Configuration settings file format documentation can be found at:
-// https://developer.apple.com/documentation/xcode/adding-a-build-configuration-file-to-your-project
+TMDB_API_KEY = 7b43492a8ba57079a8f1734a948856cd

@@ -1,12 +1,13 @@
-// ArchiveView.swift
-
 import SwiftData
 import SwiftUI
 
 struct ArchiveView: View {
-    @Query private var items: [ArchiveItem]
-    @Environment(\.modelContext) private var modelContext
+    @StateObject private var viewModel: ArchiveViewModel
     @State private var selectedTabId: String = "All"
+
+    init(modelContext: ModelContext) {
+        _viewModel = StateObject(wrappedValue: ArchiveViewModel(modelContext: modelContext))
+    }
 
     private var archiveTabs: [TabItem] {
         let allTab = TabItem("All", icon: "square.stack.fill", color: .blue)
@@ -20,10 +21,9 @@ struct ArchiveView: View {
         WatchStatus.allCases.first { $0.rawValue == selectedTabId }
     }
 
-    private var filtered: [ArchiveItem] {
-        items
+    private var filtered: [Archive] {
+        viewModel.items
             .filter { selectedStatus == nil || $0.status == selectedStatus }
-            .sorted { $0.dateAdded > $1.dateAdded }
     }
 
     var body: some View {
@@ -37,11 +37,9 @@ struct ArchiveView: View {
                     LazyVStack(spacing: 12) {
                         ForEach(filtered) { item in
                             ArchiveCard(item: item) {
-                                modelContext.delete(item)
-                                try? modelContext.save()
+                                viewModel.delete(item)
                             } onStatusChange: { newStatus in
-                                item.status = newStatus
-                                try? modelContext.save()
+                                viewModel.updateStatus(of: item, to: newStatus)
                             }
                         }
                     }
@@ -51,27 +49,25 @@ struct ArchiveView: View {
                 }
                 .background(Color(.systemGroupedBackground))
             }
-            .navigationTitle("Library")
+            .navigationTitle("Archive")
             .navigationBarTitleDisplayMode(.large)
         }
     }
 }
 
-// MARK: - ArchiveCard
-
 struct ArchiveCard: View {
-    let item: ArchiveItem
+    let item: Archive
     let onDelete: () -> Void
     let onStatusChange: (WatchStatus) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 12) {
-                AsyncImage(url: item.resolvedImageURL) { phase in
+                AsyncImage(url: item.imageUrl.flatMap { URL(string: $0) }) { phase in
                     if case .success(let img) = phase {
                         img.resizable().scaledToFill()
                     } else {
-                        ArchivePosterPlaceholder()
+                        PosterPlaceholder()
                     }
                 }
                 .frame(width: 52, height: 74)
@@ -144,16 +140,3 @@ struct ArchiveCard: View {
     }
 }
 
-// MARK: - ArchivePosterPlaceholder
-
-struct ArchivePosterPlaceholder: View {
-    var body: some View {
-        RoundedRectangle(cornerRadius: 8)
-            .fill(Color(.tertiarySystemFill))
-            .overlay(
-                Image(systemName: "photo")
-                    .foregroundStyle(.quaternary)
-                    .font(.system(size: 18))
-            )
-    }
-}
