@@ -21,34 +21,6 @@ class SearchViewModel: ObservableObject {
         return f
     }()
     
-    private struct JikanSearchResponse: Decodable { let data: [JikanAnime] }
-    private struct JikanMangaResponse: Decodable { let data: [JikanManga] }
-    
-    private struct JikanAnime: Decodable {
-        let mal_id: Int
-        let title: String
-        let synopsis: String?
-        let score: Double?
-        let type: String?
-        let images: JikanImages
-        let aired: JikanAired
-    }
-    
-    private struct JikanManga: Decodable {
-        let mal_id: Int
-        let title: String
-        let synopsis: String?
-        let score: Double?
-        let type: String?
-        let images: JikanImages
-        let published: JikanPublished
-    }
-    
-    private struct JikanImages: Decodable { let jpg: JikanImageSource }
-    private struct JikanImageSource: Decodable { let large_image_url: String? }
-    private struct JikanAired: Decodable { let from: String? }
-    private struct JikanPublished: Decodable { let from: String? }
-    
     func search(query: String) {
         searchTask?.cancel()
         guard !query.trimmingCharacters(in: .whitespaces).isEmpty else {
@@ -69,11 +41,13 @@ class SearchViewModel: ObservableObject {
         async let series = searchSeries(query: query)
         async let anime = searchAnime(query: query)
         async let manga = searchManga(query: query)
-        let (m, s, a, mg) = await (movies, series, anime, manga)
+        async let books = searchBooks(query: query)
+        let (m, s, a, mg, b) = await (movies, series, anime, manga,books)
         movieResults = m
         seriesResults = s
         animeResults = a
         mangaResults = mg
+        bookResults = b
         isLoading = false
     }
     
@@ -82,6 +56,7 @@ class SearchViewModel: ObservableObject {
         seriesResults = []
         animeResults = []
         mangaResults = []
+        bookResults = []
         errorMessage = nil
     }
     
@@ -124,7 +99,7 @@ class SearchViewModel: ObservableObject {
         }
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
-            let decoded = try JSONDecoder().decode(JikanSearchResponse.self, from: data)
+            let decoded = try JSONDecoder().decode(JikanAnimeResponse.self, from: data)
             var seenIds = Set<Int>()
             return decoded.data
                 .filter { seenIds.insert($0.mal_id).inserted }
@@ -160,4 +135,42 @@ class SearchViewModel: ObservableObject {
                 }
         } catch { return [] }
     }
+    
+    private func searchBooks(query: String) async -> [Book] {
+        let encoded = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? query
+        guard let url = URL(string: "https://openlibrary.org/search.json?q=\(encoded)&limit=10&fields=key,title,author_name,cover_i,first_publish_year,number_of_pages_median,ratings_average") else {
+            return []
+        }
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let decoded = try JSONDecoder().decode(OpenLibrarySearchResponse.self, from: data)
+            var seenIds = Set<String>()
+            return decoded.docs
+                .filter { seenIds.insert($0.key).inserted }
+                .compactMap { doc -> Book? in
+                    guard let title = doc.title else { return nil }
+                    let coverUrl: String? = doc.cover_i.map {
+                        "https://covers.openlibrary.org/b/id/\($0)-M.jpg"
+                    }
+                    return Book(
+                        openLibraryId: doc.key,
+                        title: title,
+                        authors: doc.author_name?.joined(separator: ", ") ?? "Unknown",
+                        synopsis: "No description.",
+                        imageUrl: coverUrl,
+                        publishedDate: doc.first_publish_year.map { String($0) },
+                        rating: doc.ratings_average ?? 0.0,
+                        pageCount: doc.number_of_pages_median
+                    )
+                }
+        } catch { return [] }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
 }

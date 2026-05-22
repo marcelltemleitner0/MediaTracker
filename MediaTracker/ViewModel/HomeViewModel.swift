@@ -17,32 +17,6 @@ class HomeViewModel: ObservableObject {
     return f
   }()
 
-  private struct JikanResponse: Decodable {
-    let data: [JikanAnime]
-  }
-
-  private struct JikanAnime: Decodable {
-    let mal_id: Int
-    let title: String
-    let synopsis: String?
-    let score: Double?
-    let type: String?
-    let images: JikanImages
-    let aired: JikanAired
-  }
-
-  private struct JikanImages: Decodable {
-    let jpg: JikanImageSource
-  }
-
-  private struct JikanImageSource: Decodable {
-    let large_image_url: String?
-  }
-
-  private struct JikanAired: Decodable {
-    let from: String?
-  }
-
   func fetchMoviesForHome() async {
     isLoading = true
     errorMessage = nil
@@ -73,7 +47,7 @@ class HomeViewModel: ObservableObject {
     guard let url = URL(string: "https://api.jikan.moe/v4/seasons/now?limit=10") else { return }
     do {
       let (data, _) = try await URLSession.shared.data(from: url)
-      let decoded = try JSONDecoder().decode(JikanResponse.self, from: data)
+      let decoded = try JSONDecoder().decode(JikanAnimeResponse.self, from: data)
       var seenIds = Set<Int>()
       animeList = decoded.data
         .filter { seenIds.insert($0.mal_id).inserted }
