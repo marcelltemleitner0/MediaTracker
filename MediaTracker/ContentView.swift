@@ -4,11 +4,6 @@ import SwiftUI
 struct ContentView: View {
     @State private var searchText: String = ""
     @StateObject private var searchViewModel = SearchViewModel()
-    @Environment(\.modelContext) private var modelContext
-
-    private var archiveViewModel: ArchiveViewModel {
-        ArchiveViewModel(modelContext: modelContext)
-    }
 
     var body: some View {
         TabView {
@@ -21,12 +16,14 @@ struct ContentView: View {
             }
 
             Tab("Archive", systemImage: "building.columns") {
-                ArchiveView(modelContext: modelContext)            }
+                ArchiveView()
+            }
 
             Tab("Search", systemImage: "magnifyingglass", role: .search) {
                 NavigationStack {
-                    SearchView(viewModel: searchViewModel, archiveViewModel: archiveViewModel)
-                        .navigationTitle("Search").navigationBarTitleDisplayMode(.large)
+                    SearchView(viewModel: searchViewModel,archiveViewModel: ArchiveViewModel())
+                        .navigationTitle("Search")
+                        .navigationBarTitleDisplayMode(.large)
                 }
                 .searchable(text: $searchText, placement: .toolbar, prompt: Text("Movies, series, anime…"))
                 .onChange(of: searchText) { _, newValue in
@@ -36,7 +33,8 @@ struct ContentView: View {
                     searchViewModel.search(query: searchText)
                 }
             }
-        }.tint(.red)
+        }
+        .tint(.red)
     }
 }
 

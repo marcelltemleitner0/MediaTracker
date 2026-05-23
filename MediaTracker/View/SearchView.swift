@@ -17,7 +17,8 @@ struct SearchCategory {
 
 struct SearchView: View {
     @ObservedObject var viewModel: SearchViewModel
-    @ObservedObject var archiveViewModel: ArchiveViewModel
+    @State var archiveViewModel: ArchiveViewModel
+    @Environment(\.modelContext) private var modelContext
     @State private var selectedTabId: String = "Top Results"
     @Environment(\.isSearching) private var isSearching
 
@@ -78,7 +79,7 @@ struct SearchView: View {
                         title: $0.title,
                         subtitle: "Book · \($0.authors)",
                         posterPath: nil,
-                        imageUrl: $0.imageUrl, //edit this or idk here
+                        imageUrl: $0.imageUrl,
                         rating: $0.rating
                     )
                 }
@@ -117,21 +118,11 @@ struct SearchView: View {
                         systemImage: "magnifyingglass",
                         description: Text("No results found for this category")
                     )
-                }
-                
-                
-                else {
+                } else {
                     ScrollView {
                         LazyVStack(spacing: 0) {
                             ForEach(results(for: selectedTabId)) { result in
-                                SearchRow(
-                                    title: result.title,
-                                    subtitle: result.subtitle,
-                                    posterPath: result.posterPath,
-                                    imageUrl: result.imageUrl,
-                                    rating: result.rating,
-                                    archiveViewModel: archiveViewModel
-                                )
+                                SearchRow(result: result, archiveViewModel: archiveViewModel)
                             }
                         }
                         .padding(.top, 8)
@@ -149,19 +140,16 @@ struct SearchView: View {
 }
 
 struct SearchRow: View {
-    let title: String
-    let subtitle: String
-    var posterPath: String?
-    var imageUrl: String? = nil
-    let rating: Double
-    @ObservedObject var archiveViewModel: ArchiveViewModel
+    let result: SearchResult
+    let archiveViewModel: ArchiveViewModel
 
+    @Environment(\.modelContext) private var modelContext
     @State private var showReviewSheet = false
 
     private var resolvedImageUrl: URL? {
-        if let path = posterPath {
+        if let path = result.posterPath {
             return URL(string: "https://image.tmdb.org/t/p/w92\(path)")
-        } else if let url = imageUrl {
+        } else if let url = result.imageUrl {
             return URL(string: url.replacingOccurrences(of: "http://", with: "https://"))
         }
         return nil
@@ -187,14 +175,14 @@ struct SearchRow: View {
             .clipShape(RoundedRectangle(cornerRadius: 8))
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(title)
+                Text(result.title)
                     .font(.system(size: 15, weight: .semibold))
                     .lineLimit(2)
-                Text(subtitle)
+                Text(result.subtitle)
                     .font(.system(size: 13))
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
-                Label(String(format: "%.1f", rating), systemImage: "star.fill")
+                Label(String(format: "%.1f", result.rating), systemImage: "star.fill")
                     .font(.system(size: 13, weight: .medium))
                     .foregroundStyle(.orange)
             }
@@ -231,30 +219,13 @@ struct SearchRow: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
         .sheet(isPresented: $showReviewSheet) {
-            ReviewSheet(title: title, subtitle: subtitle, imageUrl: resolvedImageUrl)
+            ReviewSheet(title: result.title, subtitle: result.subtitle, imageUrl: resolvedImageUrl)
         }
 
         Divider().padding(.leading, 80)
     }
 
     private func archive(status: WatchStatus) {
-        let mediaPrefix = subtitle.components(separatedBy: " ·").first ?? "item"
-        let compositeId = "\(mediaPrefix.lowercased())-\(title.lowercased().filter { !$0.isWhitespace })"
-
-        if let existing = archiveViewModel.items.first(where: { $0.compositeId == compositeId }) {
-            archiveViewModel.updateStatus(of: existing, to: status)
-        } else {
-            archiveViewModel.add(
-                Archive(
-                    compositeId: compositeId,
-                    title: title,
-                    subtitle: subtitle,
-                    imageUrl: resolvedImageUrl?.absoluteString,
-                    rating: rating,
-                    mediaType: MediaType(rawValue: mediaPrefix) ?? .movie,
-                    status: status
-                )
-            )
-        }
+        archiveViewModel.addOrUpdate(result, status: status, context: modelContext)
     }
 }
