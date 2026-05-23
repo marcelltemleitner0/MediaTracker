@@ -229,3 +229,23 @@ struct SearchRow: View {
         archiveViewModel.addOrUpdate(result, status: status, context: modelContext)
     }
 }
+
+#Preview {
+    @Previewable @State var searchText = ""
+    let searchVM = SearchViewModel()
+    let archiveVM = ArchiveViewModel()
+
+    NavigationStack {
+        SearchView(viewModel: searchVM, archiveViewModel: archiveVM)
+            .navigationTitle("Search")
+            .navigationBarTitleDisplayMode(.large)
+    }
+    .searchable(text: $searchText, placement: .toolbar, prompt: Text("Movies, series, anime…"))
+    .onChange(of: searchText) { _, newValue in
+        searchVM.search(query: newValue)
+    }
+    .onSubmit(of: .search) {
+        searchVM.search(query: searchText)
+    }
+    .modelContainer(for: [Review.self, Archive.self], inMemory: true)
+}

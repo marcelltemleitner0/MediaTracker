@@ -1,5 +1,3 @@
-// ReviewView.swift
-
 import SwiftData
 import SwiftUI
 
@@ -8,6 +6,8 @@ struct ReviewView: View {
     @Query(sort: \Review.createdAt, order: .reverse) private var allReviews: [Review]
     @State private var selectedTabId: String = "All"
     @State private var searchText = ""
+
+    private let viewModel = ReviewViewModel()
 
     private let reviewTabs: [TabItem] = [
         TabItem("All",   icon: "square.stack.fill", color: .red),
@@ -41,17 +41,16 @@ struct ReviewView: View {
                             systemImage: searchText.isEmpty ? "square.and.pencil" : "magnifyingglass",
                             description: Text(
                                 searchText.isEmpty
-                                ? "Your reviews will appear here"
-                                : "No reviews match \"\(searchText)\""
+                                    ? "Your reviews will appear here"
+                                    : "No reviews match \"\(searchText)\""
                             )
                         )
                         .padding(.top, 60)
                     } else {
-                        
                         LazyVStack(spacing: 12) {
                             ForEach(filtered) { review in
                                 ReviewCard(review: review) {
-                                    modelContext.delete(review)
+                                    viewModel.delete(review, context: modelContext)
                                 }
                             }
                         }
@@ -78,17 +77,13 @@ struct ReviewView: View {
                     Group {
                         if let urlString = review.mediaImageUrl,
                            let url = URL(string: urlString) {
-
                             AsyncImage(url: url) { phase in
                                 if case .success(let img) = phase {
-                                    img
-                                        .resizable()
-                                        .scaledToFill()
+                                    img.resizable().scaledToFill()
                                 } else {
                                     PosterPlaceholder()
                                 }
                             }
-
                         } else {
                             PosterPlaceholder()
                         }
@@ -178,4 +173,55 @@ struct ReviewView: View {
             }
         }
     }
+}
+
+#Preview {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: Review.self, configurations: config)
+
+
+    let samples = [
+        (
+            title: "Interstellar",
+            subtitle: "Movie · 2014-11-06",
+            url: "https://image.tmdb.org/t/p/original/yQvGrMoipbRoddT0ZR8tPoR7NfX.jpg",
+            rating: 9.2,
+            text: "Mind-bending visuals and incredible score."
+        ),
+        (
+            title: "Attack on Titan",
+            subtitle: "Anime · 2013-01-01",
+            url: "https://cdn.myanimelist.net/images/anime/1907/134102l.jpg?_gl=1*yiysm6*_gcl_au*OTg0ODQzNjQzLjE3Nzc4Mzg5ODE.*_ga*MTE5MTY0ODE4OC4xNzc3ODM4OTgx*_ga_26FEP9527K*czE3Nzk1MTkzNDYkbzMkZzAkdDE3Nzk1MTkzNDckajU5JGwwJGgw",
+            rating: 9.0,
+            text: "Phenomenal storytelling and high stakes action."
+        ),
+        (
+            title: "Dune: Part Two",
+            subtitle: "Movie · 2024-02-04",
+            url: "https://image.tmdb.org/t/p/w600_and_h900_face/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg",
+            rating: 8.6,
+            text: "Visually stunning and faithful to the source material."
+        ),
+        (
+            title: "Breaking Bad",
+            subtitle: "TV · 2008-01-01",
+            url: "https://media.themoviedb.org/t/p/w300_and_h450_face/ztkUQFLlC19CCMYHW9o1zWhJRNq.jpg",
+            rating: 9.5,
+            text: "Masterclass in character development and pacing."
+        )
+    ]
+
+    for sample in samples {
+        let review = Review(
+            mediaTitle: sample.title,
+            mediaSubtitle: sample.subtitle,
+            mediaImageUrl: sample.url,
+            rating: sample.rating,
+            reviewText: sample.text
+        )
+        container.mainContext.insert(review)
+    }
+
+    return ReviewView()
+        .modelContainer(container)
 }
