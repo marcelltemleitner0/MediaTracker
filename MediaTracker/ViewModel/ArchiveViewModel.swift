@@ -8,7 +8,7 @@ final class ArchiveViewModel {
         case title = "Title"
         var id: String { rawValue }
     }
-
+    
     func addOrUpdate(_ result: SearchResult, status: WatchStatus, context: ModelContext) {
         let mediaPrefix = result.subtitle.components(separatedBy: " ·").first ?? "item"
         let compositeId = "\(mediaPrefix.lowercased())-\(result.title.lowercased().filter { !$0.isWhitespace })"
@@ -20,10 +20,10 @@ final class ArchiveViewModel {
         } else {
             resolvedImageUrl = nil
         }
-
+        
         let descriptor = FetchDescriptor<Archive>(predicate: #Predicate { $0.compositeId == compositeId })
         let existing = try? context.fetch(descriptor).first
-
+        
         if let existing {
             existing.status = status
             if existing.imageUrl == nil {
@@ -42,17 +42,17 @@ final class ArchiveViewModel {
         }
         save(context: context)
     }
-
+    
     func updateStatus(of item: Archive, to status: WatchStatus, context: ModelContext) {
         item.status = status
         save(context: context)
     }
-
+    
     func delete(_ item: Archive, context: ModelContext) {
         context.delete(item)
         save(context: context)
     }
-
+    
     private func save(context: ModelContext) {
         do {
             try context.save()
@@ -61,7 +61,7 @@ final class ArchiveViewModel {
             print("Save error:", error)
         }
     }
-
+    
     private func syncWidget(context: ModelContext) {
         let descriptor = FetchDescriptor<Archive>()
         let all = (try? context.fetch(descriptor)) ?? []

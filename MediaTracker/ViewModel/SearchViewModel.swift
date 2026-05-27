@@ -3,15 +3,15 @@ import Foundation
 import SwiftUI
 import TMDb
 
-@MainActor
-class SearchViewModel: ObservableObject {
-    @Published var movieResults: [Movie] = []
-    @Published var seriesResults: [Series] = []
-    @Published var animeResults: [Anime] = []
-    @Published var mangaResults: [Manga] = []
-    @Published var bookResults: [Book] = []
-    @Published var isLoading = false
-    @Published var errorMessage: String?
+@Observable
+class SearchViewModel {
+    var movieResults: [Movie] = []
+    var seriesResults: [Series] = []
+    var animeResults: [Anime] = []
+    var mangaResults: [Manga] = []
+    var bookResults: [Book] = []
+    var isLoading = false
+    var errorMessage: String?
     
     private var searchTask: Task<Void, Never>?
     

@@ -14,17 +14,17 @@ struct WidgetMediaItem: Codable, Identifiable {
 enum WidgetDataManager {
     static let appGroupID = "group.MT.MediaTracker"
     static let itemsKey   = "widgetMediaItems"
-
+    
     private static var defaults: UserDefaults? {
         UserDefaults(suiteName: appGroupID)
     }
-
+    
     static func save(_ items: [WidgetMediaItem]) {
         guard let encoded = try? JSONEncoder().encode(items) else { return }
         defaults?.set(encoded, forKey: itemsKey)
         WidgetCenter.shared.reloadTimelines(ofKind: "MediaTrackerWidget")
     }
-
+    
     static func load() -> [WidgetMediaItem] {
         guard
             let data  = defaults?.data(forKey: itemsKey),

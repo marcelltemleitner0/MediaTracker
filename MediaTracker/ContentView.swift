@@ -3,22 +3,22 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var searchText: String = ""
-    @StateObject private var searchViewModel = SearchViewModel()
-
+    @Bindable private var searchViewModel = SearchViewModel()
+    
     var body: some View {
         TabView {
             Tab("Home", systemImage: "house") {
                 HomeView()
             }
-
+            
             Tab("Reviews", systemImage: "star.fill") {
                 ReviewView()
             }
-
+            
             Tab("Archive", systemImage: "building.columns") {
                 ArchiveView()
             }
-
+            
             Tab("Search", systemImage: "magnifyingglass", role: .search) {
                 NavigationStack {
                     SearchView(viewModel: searchViewModel,archiveViewModel: ArchiveViewModel())

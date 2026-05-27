@@ -6,7 +6,7 @@ final class ReviewViewModel {
     func canSubmit(rating: Double, reviewText: String) -> Bool {
         rating > 0 && reviewText.count <= 1000
     }
-
+    
     func add(
         rating: Double,
         reviewText: String,
@@ -28,7 +28,7 @@ final class ReviewViewModel {
         try? context.save()
         onDismiss()
     }
-
+    
     func delete(_ review: Review, context: ModelContext) {
         context.delete(review)
         try? context.save()

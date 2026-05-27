@@ -1,24 +1,10 @@
 import SwiftUI
 
-struct TabItem: Identifiable, Equatable {
-    let id: String
-    let title: String
-    var icon: String? = nil
-    var color: Color = .red
-
-    init(_ title: String, icon: String? = nil, color: Color = .red) {
-        self.id = title
-        self.title = title
-        self.icon = icon
-        self.color = color
-    }
-}
-
 struct TabBarPill: View {
     let tabs: [TabItem]
     @Binding var selectedId: String
     @Namespace private var tabAnimation
-
+    
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView(.horizontal, showsIndicators: false) {
@@ -46,15 +32,15 @@ struct TabBarPill: View {
                     proxy.scrollTo(selectedId, anchor: .center)
                 }
             }
-            }
         }
     }
+}
 
-private struct TabBarPillItem: View {
+struct TabBarPillItem: View {
     let tab: TabItem
     let isSelected: Bool
     var namespace: Namespace.ID
-
+    
     var body: some View {
         ZStack {
             if isSelected {
@@ -101,7 +87,7 @@ private struct TabBarPillItem: View {
                             .strokeBorder(Color.white.opacity(0.15), lineWidth: 0.5)
                     }
             }
-
+            
             HStack(spacing: 5) {
                 if let icon = tab.icon {
                     Image(systemName: icon)

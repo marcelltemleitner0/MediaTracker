@@ -6,7 +6,7 @@ enum WatchStatus: String, Codable, CaseIterable {
     case watched    = "Watched"
     case onGoing    = "On Going"
     case planningTo = "Planning to Watch"
-
+    
     var icon: String {
         switch self {
         case .watched:    return "checkmark.circle.fill"
@@ -14,7 +14,7 @@ enum WatchStatus: String, Codable, CaseIterable {
         case .planningTo: return "bookmark.fill"
         }
     }
-
+    
     var color: Color {
         switch self {
         case .watched:    return .green
@@ -42,7 +42,7 @@ class Archive {
     var mediaTypeRaw: String
     var statusRaw: String
     var dateAdded: Date
-
+    
     init(
         compositeId: String, title: String, subtitle: String,
         imageUrl: String?, rating: Double,
@@ -57,25 +57,25 @@ class Archive {
         self.statusRaw    = status.rawValue
         self.dateAdded    = Date()
     }
-
+    
     var status: WatchStatus {
         get { WatchStatus(rawValue: statusRaw) ?? .planningTo }
         set { statusRaw = newValue.rawValue }
     }
-
+    
     var mediaType: MediaType {
         MediaType(rawValue: mediaTypeRaw) ?? .movie
     }
-
+    
     func toWidgetItem() -> WidgetMediaItem {
-         WidgetMediaItem(
-             id:           compositeId,
-             title:        title,
-             subtitle:     subtitle,
-             imageUrl:     imageUrl,
-             mediaTypeRaw: mediaTypeRaw,
-             statusRaw:    statusRaw,
-             rating:       rating
-         )
-     }
+        WidgetMediaItem(
+            id:           compositeId,
+            title:        title,
+            subtitle:     subtitle,
+            imageUrl:     imageUrl,
+            mediaTypeRaw: mediaTypeRaw,
+            statusRaw:    statusRaw,
+            rating:       rating
+        )
+    }
 }

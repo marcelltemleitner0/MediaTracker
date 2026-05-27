@@ -12,9 +12,9 @@ struct MediaProvider: TimelineProvider {
         WidgetMediaItem(id: "p2", title: "Dune: Part Two", subtitle: "Sci-Fi",      imageUrl: nil, mediaTypeRaw: "Movie", statusRaw: "Planning to Watch", rating: 8.5),
         WidgetMediaItem(id: "p3", title: "Jujutsu Kaisen", subtitle: "Action",      imageUrl: nil, mediaTypeRaw: "Anime", statusRaw: "On Going",          rating: 9.0),
     ] }
-
+    
     private func loadedItems() -> [WidgetMediaItem] { Array(WidgetDataManager.load().prefix(3)) }
-
+    
     func placeholder(in context: Context) -> MediaEntry { MediaEntry(date: .now, items: previewItems) }
     func getSnapshot(in context: Context, completion: @escaping (MediaEntry) -> Void) {
         completion(MediaEntry(date: .now, items: context.isPreview ? previewItems : loadedItems()))
@@ -46,7 +46,7 @@ struct MediaTrackerWidgetView: View {
                     .font(.system(size: 9, weight: .medium, design: .monospaced)).foregroundStyle(.secondary)
             }
             .padding(.bottom, 10)
-
+            
             VStack(spacing: 5) {
                 ForEach(0..<3, id: \.self) { i in
                     if i < entry.items.count { MediaRow(item: entry.items[i]) } else { EmptySlotRow() }

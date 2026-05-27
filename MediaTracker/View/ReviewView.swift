@@ -6,9 +6,9 @@ struct ReviewView: View {
     @Query(sort: \Review.createdAt, order: .reverse) private var allReviews: [Review]
     @State private var selectedTabId: String = "All"
     @State private var searchText = ""
-
+    
     private let viewModel = ReviewViewModel()
-
+    
     private let reviewTabs: [TabItem] = [
         TabItem("All",   icon: "square.stack.fill", color: .red),
         TabItem("Movie", icon: "film",              color: .red),
@@ -17,23 +17,23 @@ struct ReviewView: View {
         TabItem("Manga", icon: "book.closed",       color: .red),
         TabItem("Book",  icon: "books.vertical",    color: .red),
     ]
-
+    
     var filtered: [Review] {
         allReviews.filter {
             (selectedTabId == "All" || $0.mediaKind == selectedTabId)
-                && (searchText.isEmpty
-                    || $0.mediaTitle.localizedCaseInsensitiveContains(searchText)
-                    || $0.reviewText.localizedCaseInsensitiveContains(searchText))
+            && (searchText.isEmpty
+                || $0.mediaTitle.localizedCaseInsensitiveContains(searchText)
+                || $0.reviewText.localizedCaseInsensitiveContains(searchText))
         }
     }
-
+    
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
                 TabBarPill(tabs: reviewTabs, selectedId: $selectedTabId)
-
+                
                 Divider()
-
+                
                 ScrollView {
                     if filtered.isEmpty {
                         ContentUnavailableView(
@@ -41,8 +41,8 @@ struct ReviewView: View {
                             systemImage: searchText.isEmpty ? "square.and.pencil" : "magnifyingglass",
                             description: Text(
                                 searchText.isEmpty
-                                    ? "Your reviews will appear here"
-                                    : "No reviews match \"\(searchText)\""
+                                ? "Your reviews will appear here"
+                                : "No reviews match \"\(searchText)\""
                             )
                         )
                         .padding(.top, 60)
@@ -65,12 +65,12 @@ struct ReviewView: View {
             }
         }
     }
-
+    
     struct ReviewCard: View {
         let review: Review
         let onDelete: () -> Void
         @State private var isExpanded = false
-
+        
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: 12) {
@@ -91,7 +91,7 @@ struct ReviewView: View {
                     .frame(width: 52, height: 74)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                     .shadow(color: .black.opacity(0.12), radius: 4, x: 0, y: 2)
-
+                    
                     VStack(alignment: .leading, spacing: 4) {
                         Text(review.mediaTitle)
                             .font(.system(size: 15, weight: .semibold))
@@ -113,12 +113,12 @@ struct ReviewView: View {
                                 .padding(.leading, 2)
                         }
                     }
-
+                    
                     Spacer()
                 }
                 .padding(.horizontal, 14)
                 .padding(.top, 14)
-
+                
                 if !review.reviewText.isEmpty {
                     Divider()
                         .padding(.horizontal, 14)
@@ -142,7 +142,7 @@ struct ReviewView: View {
                     .padding(.horizontal, 14)
                     .padding(.top, 8)
                 }
-
+                
                 HStack {
                     Text(review.mediaKind)
                         .font(.system(size: 11, weight: .semibold))
@@ -178,8 +178,8 @@ struct ReviewView: View {
 #Preview {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: Review.self, configurations: config)
-
-
+    
+    
     let samples = [
         (
             title: "Interstellar",
@@ -210,7 +210,7 @@ struct ReviewView: View {
             text: "Masterclass in character development and pacing."
         )
     ]
-
+    
     for sample in samples {
         let review = Review(
             mediaTitle: sample.title,
@@ -221,7 +221,7 @@ struct ReviewView: View {
         )
         container.mainContext.insert(review)
     }
-
+    
     return ReviewView()
         .modelContainer(container)
 }

@@ -28,11 +28,11 @@ struct JikanImageSource: Decodable { let large_image_url: String? }
 struct JikanAired: Decodable { let from: String? }
 struct JikanPublished: Decodable { let from: String? }
 
- struct OpenLibrarySearchResponse: Decodable {
+struct OpenLibrarySearchResponse: Decodable {
     let docs: [OpenLibraryDoc]
 }
 
- struct OpenLibraryDoc: Decodable {
+struct OpenLibraryDoc: Decodable {
     let key: String
     let title: String?
     let author_name: [String]?

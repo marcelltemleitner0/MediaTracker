@@ -16,12 +16,12 @@ struct SearchCategory {
 }
 
 struct SearchView: View {
-    @ObservedObject var viewModel: SearchViewModel
+    @Bindable var viewModel: SearchViewModel
     @State var archiveViewModel: ArchiveViewModel
     @Environment(\.modelContext) private var modelContext
     @State private var selectedTabId: String = "Top Results"
     @Environment(\.isSearching) private var isSearching
-
+    
     private var categories: [SearchCategory] {
         [
             SearchCategory(tab: TabItem("Movies", icon: "film", color: .red)) { vm in
@@ -86,28 +86,28 @@ struct SearchView: View {
             },
         ]
     }
-
+    
     private var topResults: [SearchResult] {
         categories
             .flatMap { $0.results(viewModel).prefix(3) }
             .sorted { $0.rating > $1.rating }
     }
-
+    
     private var searchTabs: [TabItem] {
         [TabItem("Top Results", icon: "star.fill", color: .red)]
         + categories.map(\.tab)
     }
-
+    
     private func results(for tabId: String) -> [SearchResult] {
         if tabId == "Top Results" { return topResults }
         return categories.first { $0.tab.id == tabId }?.results(viewModel) ?? []
     }
-
+    
     var body: some View {
         VStack(spacing: 0) {
             if isSearching {
                 TabBarPill(tabs: searchTabs, selectedId: $selectedTabId)
-
+                
                 if viewModel.isLoading {
                     Spacer()
                     ProgressView()
@@ -142,10 +142,10 @@ struct SearchView: View {
 struct SearchRow: View {
     let result: SearchResult
     let archiveViewModel: ArchiveViewModel
-
+    
     @Environment(\.modelContext) private var modelContext
     @State private var showReviewSheet = false
-
+    
     private var resolvedImageUrl: URL? {
         if let path = result.posterPath {
             return URL(string: "https://image.tmdb.org/t/p/w92\(path)")
@@ -154,7 +154,7 @@ struct SearchRow: View {
         }
         return nil
     }
-
+    
     var body: some View {
         HStack(spacing: 12) {
             Group {
@@ -173,7 +173,7 @@ struct SearchRow: View {
             }
             .frame(width: 52, height: 74)
             .clipShape(RoundedRectangle(cornerRadius: 8))
-
+            
             VStack(alignment: .leading, spacing: 4) {
                 Text(result.title)
                     .font(.system(size: 15, weight: .semibold))
@@ -186,9 +186,9 @@ struct SearchRow: View {
                     .font(.system(size: 13, weight: .medium))
                     .foregroundStyle(.orange)
             }
-
+            
             Spacer()
-
+            
             Menu {
                 Menu {
                     Button { archive(status: .watched) } label: {
@@ -203,7 +203,7 @@ struct SearchRow: View {
                 } label: {
                     Label("Mark as…", systemImage: "tag")
                 }
-
+                
                 Divider()
                 Button { showReviewSheet = true } label: {
                     Label("Leave a Review", systemImage: "square.and.pencil")
@@ -221,10 +221,10 @@ struct SearchRow: View {
         .sheet(isPresented: $showReviewSheet) {
             ReviewSheet(title: result.title, subtitle: result.subtitle, imageUrl: resolvedImageUrl)
         }
-
+        
         Divider().padding(.leading, 80)
     }
-
+    
     private func archive(status: WatchStatus) {
         archiveViewModel.addOrUpdate(result, status: status, context: modelContext)
     }
@@ -234,7 +234,7 @@ struct SearchRow: View {
     @Previewable @State var searchText = ""
     let searchVM = SearchViewModel()
     let archiveVM = ArchiveViewModel()
-
+    
     NavigationStack {
         SearchView(viewModel: searchVM, archiveViewModel: archiveVM)
             .navigationTitle("Search")
